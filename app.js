@@ -17,6 +17,8 @@ var utils = require('./db/utils')
 
 var User = require('./db/user');
 var Prediction = require('./db/prediction')
+var Group = require('./db/group')
+
 
 
 
@@ -48,7 +50,7 @@ app.use('/users', users);
 
 app.post('/signup',function(req,res,next){
 
-    user = User.createUser(username=req.body.username,house=req.body.house,uuid=req.body.uuid,email=req.body.email,platform=req.body.platform)
+    var user = User.createUser(username=req.body.username,house=req.body.house,uuid=req.body.uuid,email=req.body.email,platform=req.body.platform)
     utils.insert_instance(user,function(err,user){
         try{
             if(err) throw err
@@ -57,6 +59,38 @@ app.post('/signup',function(req,res,next){
             res.send(JSON.stringify({user:{},error:e.message}))
         }
     });
+})
+
+
+
+app.post('/group/create',function(req,res,next){
+
+    var group = Group.createGroup(name=req.body.name,description=req.body.description)
+    utils.insert_instance(group,function(err,group){
+        try{
+            if(err) throw err
+            res.send(JSON.stringify({group:group}))
+        }catch(e){
+            console.log(e)
+            res.send(JSON.stringify({user:{},error:e.message}))
+        }
+    })
+
+})
+
+
+
+
+app.post('/group/search',function(req,res,next){
+    Group.getByCode(code=req.body.code,function(err,group){
+        try{
+            if(err) throw err
+            res.send(JSON.stringify({group:group}))
+        }catch(e){
+            res.send(JSON.stringify({error:e.message,group:{}}))
+        }
+    })
+
 })
 
 
@@ -71,9 +105,9 @@ app.post('/user/update',function(req,res,next){
             res.send(JSON.stringify({user:{},error:e.message}))
         }
     })
-
-
 })
+
+
 
 //http://localhost:3000/user?uuid=12Ds234FTR
 app.get('/user',function(req,res,next){
