@@ -82,10 +82,10 @@ app.post('/group/create',function(req,res,next){
 
 
 app.post('/group/search',function(req,res,next){
-    Group.getByCode(code=req.body.code,function(err,group){
+    Group.getByCode(code=req.body.code,function(err,valid){
         try{
             if(err) throw err
-            res.send(JSON.stringify({group:group}))
+            res.send(JSON.stringify({valid:valid}))
         }catch(e){
             res.send(JSON.stringify({error:e.message,group:{}}))
         }
@@ -96,10 +96,10 @@ app.post('/group/search',function(req,res,next){
 
 
 app.post('/group/join', function(req,res,next){
-    Group.joinUserToGroup(groupId=req.body.groupId, userId=req.body.userId, function(err, joined){
+    Group.joinUserToGroup(code=req.body.code, userId=req.body.userId, function(err, data){
         try{
             if(err) throw err
-            res.send(JSON.stringify({joined:joined.userJoined}))
+            res.send(JSON.stringify({joined:data.userJoined,group:data.group}))
         }catch(e){
             res.send(JSON.stringify({error:e.message,group:{}}))
 

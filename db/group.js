@@ -24,30 +24,35 @@ createGroup = function(name,description){
 
 getByCode = function(code,cb){
 
-    Group.findOne({'code':code},function(err,group){
+
+    Group.findOne({'code':code}).populate("users").exec(function(err,group){
         if(err) return cb(err)
-
-        if(group !=null){
-            // TODO: traer a los users
+        console.log(group)
+        if(group == null){
+            cb(null,false)
+        }else{
+            cb(null,true)
         }
-
-
-        cb(null,group)
     })
 
 }
 
 
-joinUserToGroup = function(groupId,userId,cb){
-    console.log(groupId)
+joinUserToGroup = function(code,userId,cb){
+    console.log(code)
 
-    Group.findOne({'_id':groupId},function(err,group){
+    Group.findOne({'code':code},function(err,group){
         if(err) return cb(err,{userJoined:false});
-        console.log(group)
+        if(group == null) return cb(null,{userJoined:false})
         group.users.push(userId)
         group.save(function(err,groupUpdated){
             if(err) return cb(err,{userJoined:false});
-            cb(null,{userJoined:true})
+            groupUpdated.populate('users',function(err,groupPopulated){
+                if(err) return cb(err,{userJoined:false});
+                console.log(groupPopulated)
+                cb(null,{userJoined:true,group:groupPopulated})
+            })
+
         })
 
     })
