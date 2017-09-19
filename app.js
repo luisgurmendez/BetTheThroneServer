@@ -94,6 +94,20 @@ app.post('/group/search',function(req,res,next){
 })
 
 
+
+app.post('/group/join', function(req,res,next){
+    Group.joinUserToGroup(groupId=req.body.groupId, userId=req.body.userId, function(err, joined){
+        try{
+            if(err) throw err
+            res.send(JSON.stringify({joined:joined.userJoined}))
+        }catch(e){
+            res.send(JSON.stringify({error:e.message,group:{}}))
+
+        }
+    })
+})
+
+
 app.post('/user/update',function(req,res,next){
     console.log(req.body)
 

@@ -38,11 +38,32 @@ getByCode = function(code,cb){
 }
 
 
+joinUserToGroup = function(groupId,userId,cb){
+    console.log(groupId)
+
+    Group.findOne({'_id':groupId},function(err,group){
+        if(err) return cb(err,{userJoined:false});
+        console.log(group)
+        group.users.push(userId)
+        group.save(function(err,groupUpdated){
+            if(err) return cb(err,{userJoined:false});
+            cb(null,{userJoined:true})
+        })
+
+    })
+
+
+
+
+}
+
+
 var exports = module.exports = {};
 
 // Export methods
 exports.createGroup = createGroup;
 exports.getByCode = getByCode;
+exports.joinUserToGroup = joinUserToGroup;
 
 
 
